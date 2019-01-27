@@ -19,7 +19,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 var fs = require("fs");
 var path = require("path");
-var { execute } = require("@asterics/node-util");
+var { execute } = require("@asterics/node-utils");
 
 function mapDirectoryStats(dirPath, dirName) {
   let p = `${dirPath}/${dirName}`;

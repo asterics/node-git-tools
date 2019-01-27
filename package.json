@@ -1,6 +1,6 @@
 {
   "name": "@asterics/git-tools",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "git repository tools and related utilities",
   "main": "index.js",
   "scripts": {
