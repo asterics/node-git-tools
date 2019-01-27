@@ -42,7 +42,7 @@ Available parameters:
 
 Returns:
 
-Local path to git repository. "" (empty string) if not available.
+Local path to git repository. `""` (empty string) if not available.
 
 ### checkoutSubmodule( { name, destination, branch, fatality }, verbose )
 
