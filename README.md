@@ -38,7 +38,12 @@ Get path to git repository `name` starting `from` in all parent directories.
 Available parameters:
 
 * `from`: Path to start search from.
-* `name`: Name of folder containing git repository.
+* `name`: Name of folder containing git repository.  The Name 
+  
+  The `name` must either be _prefixed_ or an _absolute path_.
+  * `auto:` search for repository with the name following the prefix.
+  * `remote:` returns `""`.
+  * `/path/to/repo`: check and return if path is absolute.
 
 Returns:
 
