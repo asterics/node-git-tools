@@ -78,7 +78,7 @@ function gitwd(location) {
 }
 
 function ensureGitSubmodule({ name, destination, reference = "", branch = "master", fatality = false }, verbose = false) {
-  let localReference = reference ? `--reference ${destination}` : "";
+  let localReference = reference ? `--reference ${reference}` : "";
 
   let commands = {
     submodule: `git submodule update --init ${localReference} ${destination}`,
