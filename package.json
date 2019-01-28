@@ -1,6 +1,6 @@
 {
   "name": "@asterics/git-tools",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "git repository tools and related utilities",
   "main": "index.js",
   "scripts": {
@@ -8,21 +8,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sabicalija/node-git-tools.git"
+    "url": "git+https://github.com/asterics/node-git-tools.git"
   },
   "keywords": [
     "git",
     "shell",
     "cli"
   ],
-  "author": "Alija Sabic",
+  "author": "AsTeRICS",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/sabicalija/node-git-tools/issues"
+    "url": "https://github.com/asterics/node-git-tools/issues"
   },
-  "homepage": "https://github.com/sabicalija/node-git-tools#readme",
+  "homepage": "https://github.com/asterics/node-git-tools#readme",
   "dependencies": {
-    "@asterics/node-utils": "0.0.1"
+    "@asterics/node-utils": "^0.1.0"
   },
   "devDependencies": {}
 }
