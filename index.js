@@ -21,20 +21,76 @@ var fs = require("fs");
 var path = require("path");
 var { execute } = require("@asterics/node-utils");
 
+function isDirectory(d) {
+  let result = false;
+  if (fs.existsSync(d)) {
+    fs.accessSync(d, fs.constants.R_OK);
+    result = fs.statSync(d).isDirectory();
+  }
+  return result;
+}
+
+function isLocalGitRepository(d) {
+  let f = fs.readdirSync(d);
+  /* Map to absolute path */
+  f = f.map(e => path.join(d, e));
+  /* Extract directories only */
+  f = f.filter(e => isDirectory(e));
+  /* Check for folder `.git` */
+  return f.find(e => /.git$/.test(e)) ? true : false;
+}
+
+function getReferenceInPath(location, repository) {
+  if (!path.isAbsolute(location)) return;
+
+  let search = new RegExp(repository + "$");
+  let result;
+  let current = path.normalize(location);
+  let levels = current.split(path.sep).length;
+
+  for (let i = 0; i < levels && !result; i++, current = path.join(current, "..")) {
+    try {
+      if (fs.existsSync(current)) {
+        let f = fs.readdirSync(current);
+        /* Map to absolute paths */
+        f = f.map(e => path.join(current, e));
+        /* Extract directories only */
+        f = f.filter(e => isDirectory(e));
+        /* Extract git directories only */
+        f = f.filter(e => isLocalGitRepository(e));
+        /* Find matching entry */
+        result = f.find(e => search.test(e));
+      }
+    } catch (err) {
+      result = false;
+    }
+  }
+
+  return result ? result : "";
+}
+
+/** Deprecated */
 function mapDirectoryStats(dirPath, dirName) {
   let p = `${dirPath}/${dirName}`;
   return { path: p, stat: fs.statSync(p) };
 }
 
+/** Deprecated */
 function isLocalRepositoryPath(dirPath) {
-  let rGitFolder = /.git$/,
-    folders = fs
-      .readdirSync(dirPath)
-      .map(e => mapDirectoryStats(dirPath, e))
-      .filter(e => e.stat.isDirectory() && rGitFolder.test(e.path));
-  return folders.length > 0;
+  try {
+    fs.accessSync(dirPath, fs.constants.R_OK);
+    let rGitFolder = /.git$/,
+      folders = fs
+        .readdirSync(dirPath)
+        .map(e => mapDirectoryStats(dirPath, e))
+        .filter(e => e.stat.isDirectory() && rGitFolder.test(e.path));
+    return folders.length > 0;
+  } catch (err) {
+    return 0;
+  }
 }
 
+/** Deprecated */
 function gitLocalPath(from, name) {
   let auto = /^auto:/,
     remote = /^remote/,
@@ -129,4 +185,4 @@ function checkoutSubmodule({ name, destination, reference, branch = "master", fa
   });
 }
 
-module.exports = { gitLocalPath, ensureGitSubmodule, checkoutSubmodule };
+module.exports = { gitLocalPath, ensureGitSubmodule, checkoutSubmodule, getReferenceInPath };

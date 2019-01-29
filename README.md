@@ -31,7 +31,9 @@ Most of the exported functions depend on [`@asterics/node-utils`](https://www.np
 
 ## API Reference
 
-### gitLocalPath( from, name )
+### gitLocalPath( from, name ) `deprecated`
+
+Deprecated since: `v0.1.5`
 
 Get path to git repository `name` starting `from` in all parent directories.
 
@@ -73,3 +75,16 @@ Available properties:
 * `[branch]`: Branch to check out (default: "master").
 * `[fatality]`: Abort program on error (default: false).
 * `[verbose]`: Verbose logging (default: false).
+
+### getReferenceInPath( path, name )
+
+Get reference to git repository `name` searching `path` and parent directories.
+
+Available parameters:
+
+* `path`: Path to search (incl. parent directories).
+* `name`: Directory name containing git repository.
+
+Returns:
+
+Path to reference git repository. `""` (empty string) if none available.
