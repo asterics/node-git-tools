@@ -19,7 +19,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 var fs = require("fs");
 var path = require("path");
-var { execute } = require("@asterics/node-utils");
+var { execute, hasShellCommand } = require("@asterics/node-utils");
 
 function isDirectory(d) {
   let result = false;
@@ -133,13 +133,23 @@ function gitwd(location) {
   return location ? `--git-dir=${location}/.git --work-tree=${location}` : "";
 }
 
-function ensureGitSubmodule({ name, destination, reference = "", branch = "master", fatality = false }, verbose = false) {
+function checkDep() {
+  if (!hasShellCommand("git")) {
+    console.log("ensureGitSubmodule() requires git (shell).");
+    return false;
+  }
+  return true;
+}
+
+function ensureGitSubmodule({ name, location, reference = "", branch = "master", fatality = false }, verbose = false) {
+  if (!checkDep()) return;
+
   let localReference = reference ? `--reference ${reference}` : "";
 
   let commands = {
-    submodule: `git submodule update --init ${localReference} ${destination}`,
-    checkout: `git ${gitwd(destination)} checkout ${branch}`,
-    sync: `git ${gitwd(destination)} pull origin ${branch}`
+    submodule: `git submodule update --init ${localReference} ${location}`,
+    checkout: `git ${gitwd(location)} checkout ${branch}`,
+    sync: `git ${gitwd(location)} pull origin ${branch}`
   };
 
   /* clone repository */
@@ -163,22 +173,24 @@ function ensureGitSubmodule({ name, destination, reference = "", branch = "maste
   /* synchronize with remote origin */
   execute({
     cmd: commands["sync"],
-    success: `synchronized with remote origin '${branch}'`,
+    success: `submodule '${name}' synchronized with remote origin '${branch}'`,
     error: `failed pulling from remote origin '${branch}'`,
     fatality,
     verbose
   });
 }
 
-function checkoutSubmodule({ name, destination, reference, branch = "master", fatality = false }, verbose = false) {
+function checkoutSubmodule({ name, location, reference, branch = "master", fatality = false }, verbose = false) {
+  if (!checkDep()) return;
+
   let commands = {
-    checkout: `git ${gitwd(destination)} checkout ${branch}`
+    checkout: `git ${gitwd(location)} checkout ${branch}`
   };
 
   /* checkout branch */
   execute({
     cmd: commands["checkout"],
-    success: `checked out ${name} at '${branch}'`,
+    success: `submodule '${name}' checked out ${name} at '${branch}'`,
     error: `failed checking out '${name}' at '${branch}'`,
     fatality,
     verbose
