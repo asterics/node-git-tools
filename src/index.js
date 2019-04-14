@@ -17,9 +17,9 @@
 
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-var fs = require("fs");
-var path = require("path");
-var { execute, hasShellCommand } = require("@asterics/node-utils");
+import fs from "fs";
+import path from "path";
+import { execute, hasShellCommand } from "@asterics/node-utils";
 
 function isDirectory(d) {
   let result = false;
@@ -40,7 +40,7 @@ function isLocalGitRepository(d) {
   return f.find(e => /.git$/.test(e)) ? true : false;
 }
 
-function getReferenceInPath(location, repository) {
+export function getReferenceInPath(location, repository) {
   if (!path.isAbsolute(location)) return;
 
   let search = new RegExp(repository + "$");
@@ -91,7 +91,7 @@ function isLocalRepositoryPath(dirPath) {
 }
 
 /** Deprecated */
-function gitLocalPath(from, name) {
+export function gitLocalPath(from, name) {
   let auto = /^auto:/,
     remote = /^remote/,
     resultPath;
@@ -141,7 +141,7 @@ function checkDep() {
   return true;
 }
 
-function ensureGitSubmodule({ name, location, reference = "", branch = "master", fatality = false }, verbose = false) {
+export function ensureGitSubmodule({ name, location, reference = "", branch = "master", fatality = false }, verbose = false) {
   if (!checkDep()) return;
 
   let localReference = reference ? `--reference ${reference}` : "";
@@ -149,7 +149,7 @@ function ensureGitSubmodule({ name, location, reference = "", branch = "master",
   let commands = {
     submodule: `git submodule update --init ${localReference} ${location}`,
     checkout: `git ${gitwd(location)} checkout ${branch}`,
-    sync: `git ${gitwd(location)} pull origin ${branch}`
+    sync: `git ${gitwd(location)} pull --all`
   };
 
   /* clone repository */
@@ -173,14 +173,14 @@ function ensureGitSubmodule({ name, location, reference = "", branch = "master",
   /* synchronize with remote origin */
   execute({
     cmd: commands["sync"],
-    success: `submodule '${name}' synchronized with remote origin '${branch}'`,
-    error: `failed pulling from remote origin '${branch}'`,
+    success: `submodule '${name}' synchronized with remote origin`,
+    error: `failed pulling '${name}' from remote origin`,
     fatality,
     verbose
   });
 }
 
-function checkoutSubmodule({ name, location, reference, branch = "master", fatality = false }, verbose = false) {
+export function checkoutSubmodule({ name, location, reference, branch = "master", fatality = false }, verbose = false) {
   if (!checkDep()) return;
 
   let commands = {
@@ -196,5 +196,3 @@ function checkoutSubmodule({ name, location, reference, branch = "master", fatal
     verbose
   });
 }
-
-module.exports = { gitLocalPath, ensureGitSubmodule, checkoutSubmodule, getReferenceInPath };
